@@ -31,10 +31,6 @@ const clinicSchema = new mongoose.Schema({
         },
         formattedAddress: String
     },
-    timeSlots:{
-        type:Object,
-        required: false,
-    },
     Open: {
         type: Boolean,
         default: true,
@@ -44,6 +40,20 @@ const clinicSchema = new mongoose.Schema({
         ref: 'TimeSlots',
         required: false
     },
+    patientId:[{
+        eventDate: {
+            type:Date
+        },
+        patientName: {
+            type: String,
+        },
+        patientPhoneNo: {
+            type: Number,
+        },
+        eventTiming: [{
+            startTime: {type: Date, required: true},
+        }],
+    }]
 })
 const Clinic = mongoose.model('Clinic', clinicSchema)
 

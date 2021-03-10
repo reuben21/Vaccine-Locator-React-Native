@@ -59,6 +59,23 @@ const MyReactNativeForm = props => {
 
       // const resData = await response.json();
       // setUserDetails(resData);
+
+      const response = await fetch("http://10.0.2.2:4000/get/slots", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            "clinicObjectId": userId,
+
+          }),
+        },
+      );
+
+
+      const resData = await response.json();
+      setSlotDetails(resData);
+
       if (expirationDate <= new Date() || !token || !userId) {
         navigation.navigate("UserClinicPage");
         return;
@@ -71,6 +88,12 @@ const MyReactNativeForm = props => {
     };
 
     tryLogin();
+<<<<<<< HEAD
+=======
+
+
+  }, [dispatch]);
+>>>>>>> cb0e1ec50413bb25563532ad8630c159e18f589e
 
 
   }, [dispatch]);
@@ -159,10 +182,15 @@ const MyReactNativeForm = props => {
   };
 
   const addSlot = async () => {
+<<<<<<< HEAD
     var timeSlots = {};
     var nestedTimeSlot = {};
 <<<<<<< HEAD
 =======
+=======
+
+
+>>>>>>> cb0e1ec50413bb25563532ad8630c159e18f589e
     console.log(JSON.stringify({
             "clinicObjectId": getUserId,
             "eventDate": showDateText,
@@ -231,7 +259,7 @@ const MyReactNativeForm = props => {
         alignItems: "center",
       }}>
         {slotDetails && slotDetails.map((i, j) => {
-          return <Card style={{
+          return <Card key={j} style={{
             width: "90%",
             marginTop: 10,
             backgroundColor: planted_colors.BLUEISH_GREEN,
@@ -239,15 +267,15 @@ const MyReactNativeForm = props => {
 
             <Card.Content>
               <Title>Date: {new Date(i.eventDate).toLocaleDateString()}</Title>
-              {i.eventTiming.map((i, j) => {
-                return <View view={{
+              {i.eventTiming.map((k, l) => {
+                return <View key={l} view={{
                 backgroundColor:planted_colors.STRONG_YELLOW,
                   width:"100%",
                   height:"100%"
                 }}>
-                  <Paragraph>Start Time : {new Date(i.startTime).toLocaleTimeString()}</Paragraph>
-                  <Paragraph>End Time : {new Date(i.endTime).toLocaleTimeString()}</Paragraph>
-                  <Paragraph>Capacity: {i.allotmentLimit}</Paragraph>
+                  <Paragraph>Start Time : {new Date(k.startTime).toLocaleTimeString()}</Paragraph>
+                  <Paragraph>End Time : {new Date(k.endTime).toLocaleTimeString()}</Paragraph>
+                  <Paragraph>Capacity: {k.allotmentLimit}</Paragraph>
                 </View>;
               })}
 
