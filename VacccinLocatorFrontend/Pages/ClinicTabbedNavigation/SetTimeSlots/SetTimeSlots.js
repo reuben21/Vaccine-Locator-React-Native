@@ -1,39 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
-import { TextInput, Button, Card, Title, Paragraph } from "react-native-paper";
+import { Text, View, StyleSheet, Image, Button } from "react-native";
+import { TextInput } from "react-native-paper";
 import * as planted_colors from "../../../Components/Color";
 
 import { useDispatch } from "react-redux";
 import * as authActions from "../../../store/actions/auth";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-
+import DropDownPicker from "react-native-dropdown-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
-import LottieView from "lottie-react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const theme = {
 
   roundness: 4,
   colors: {
-    placeholder: "white", text: planted_colors.STRONG_RED, primary: planted_colors.STRONG_RED,
+    placeholder: "white", text: "red", primary: "red",
     underlineColor: "black", background: planted_colors.LIGHT_BLUE,
   },
-};
+};    
 
 Date.prototype.addDays = function(days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
-};
+}
 
 const MyReactNativeForm = props => {
-
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [userDetails, setUserDetails] = useState({});
   const [loading, setLoading] = useState(true);
-  const [getUserId, setUserId] = useState("");
 
   useEffect(() => {
     const tryLogin = async () => {
@@ -44,9 +41,9 @@ const MyReactNativeForm = props => {
         return;
       }
       const transformedData = JSON.parse(userData);
-      const { token, userId, expiryDate, userType } = transformedData;
+      const { token, userId, expiryDate,userType } = transformedData;
       const expirationDate = new Date(expiryDate);
-      setUserId(userId);
+
       // const response = await fetch("http://10.0.2.2:4000/patient/single", {
       //     method: "POST",
       //     headers: {
@@ -69,113 +66,90 @@ const MyReactNativeForm = props => {
 
       const expirationTime = expirationDate.getTime() - new Date().getTime();
 
-      dispatch(authActions.authenticate(userId, token, expirationTime, userType));
+      dispatch(authActions.authenticate(userId, token, expirationTime,userType));
       setLoading(false);
     };
 
     tryLogin();
-    getSlots();
+
 
   }, [dispatch]);
 
 
-  // const [mode, setMode] = useState("time");
-  // const [showStartTime, setShowStartTime] = useState(false);
-  // const [showEndTime, setShowEndTime] = useState(false);
-  // const [showDate, setShowDate] = useState(false);
-  // const [time, setTime] = useState();
-
-  const [date, setDate] = React.useState(new Date);
-  const [open, setOpen] = React.useState(false);
-
-  const [visibleTime, setVisibleTime] = React.useState(false);
+  const [mode, setMode] = useState("time");
+  const [showStartTime, setShowStartTime] = useState(false);
+  const [showEndTime, setShowEndTime] = useState(false);
+  const [showDate, setShowDate] = useState(false);
+  const [time, setTime] = useState();
 
   const [showStartTimeText, setShowStartTimeText] = useState("");
+  const [showEndTimeText, setShowEndTimeText] = useState("");
   const [showDateText, setShowDateText] = useState("");
-  const [count, setCount] = useState(0);
-
-  const [slotDetails, setSlotDetails] = useState([]);
+  const [count, setCount] = useState("");
 
   const [countRepeat, setCountRepeat] = useState(0);
 
-  const onDismissSingle = React.useCallback(() => {
-    setOpen(false);
-  }, [setOpen]);
+  const showModeStartTime = (currentMode) => {
+    setShowStartTime(true);
 
-  const onConfirmSingle = React.useCallback(
-    (params) => {
-      setOpen(false);
-      setDate(params.date);
-    },
-    [setOpen, setDate],
-  );
+  };
 
-  const onDismissTime = React.useCallback(() => {
-    setVisibleTime(false);
-  }, [setVisibleTime]);
+  const showTimepickerStartTime = () => {
+    showModeStartTime("time");
+  };
 
 
-  const onConfirmTime = React.useCallback(
-    ({ hours, minutes }) => {
-      setVisibleTime(false);
-      var d = new Date();
-      d.setHours(hours);
-      d.setMinutes(minutes);
-      setShowStartTimeText(d.toLocaleTimeString());
+  const showModeEndTime = (currentMode) => {
+    setShowEndTime(true);
 
-      console.log({ hours, minutes });
-    },
-    [setVisibleTime],
-  );
+  };
 
-  const getSlots = async () => {
-
-    console.log("getSlots", getUserId);
-
-    const response = await fetch("http://10.0.2.2:4000/get/slots", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          "clinicObjectId": getUserId,
-
-        }),
-      },
-    );
+  const showTimepickerEndTime = () => {
+    showModeEndTime("time");
+  };
 
 
-    const resData = await response.json();
-    setSlotDetails(resData);
-    console.log(resData);
+  // const showDate = (currentMode) => {
+  //   setShowEndTime(true);
+  //
+  // };
+
+  const showDatePicker = () => {
+    setShowDate(true);
   };
 
   const addSlot = async () => {
     var timeSlots = {};
     var nestedTimeSlot = {};
-    console.log(count);
 
-    const response = await fetch("http://10.0.2.2:4000/clinic/add/time", {
+    nestedTimeSlot[showStartTimeText.toString()] =[0,count];
+
+    timeSlots[showDateText] = nestedTimeSlot;
+
+
+
+    var timeSlotData = JSON.stringify({
+      "clinicObjectId": "6044df4fb8b7d14f20a42b3a",
+      "timeSlots": timeSlots,
+
+    });
+
+    console.log(timeSlotData);
+    const response = await fetch("http://10.0.2.2:4000/clinic/addtime", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      headers: {
+        "Content-Type": "application/json",
+      },
         body: JSON.stringify({
-          "clinicObjectId": getUserId,
-          "eventDate": showDateText,
-          "start_time": showStartTimeText,
-          "count": count,
+          "clinicObjectId": "6044df4fb8b7d14f20a42b3a",
+          "timeSlots": timeSlots,
         }),
       },
     );
 
 
     const resData = await response.json();
-    // setShowStartTimeText("")
-    // setShowDateText("")
-    // setCount("")
-    getSlots();
-    console.log(resData);
+    console.log(resData)
   };
 
   console.log(userDetails);
@@ -187,7 +161,12 @@ const MyReactNativeForm = props => {
         justifyContent: "center",
         alignItems: "center",
       }}>
-        <LottieView source={require("../../../Components/Images/loading.json")} autoPlay loop />
+        <Image style={{
+          width: "50%",
+          resizeMode: "contain",
+        }}
+               source={require("../../../Components/Images/user.png")}
+        />
       </View>
     );
   }
@@ -203,7 +182,7 @@ const MyReactNativeForm = props => {
       }}>
 
         <View style={{
-          width: "40%",
+          width: "30%",
           alignItems: "center",
         }}>
           <Text style={{
@@ -214,7 +193,17 @@ const MyReactNativeForm = props => {
         </View>
 
         <View style={{
-          width: "40%",
+          width: "30%",
+          alignItems: "center",
+
+        }}>
+          <Text style={{
+            color: planted_colors.STRONG_RED,
+
+          }}>{showEndTimeText}</Text>
+        </View>
+        <View style={{
+          width: "30%",
           alignItems: "center",
 
         }}>
@@ -223,7 +212,6 @@ const MyReactNativeForm = props => {
 
           }}>{showDateText}</Text>
         </View>
-
       </View>
       <View style={{
         flexDirection: "row",
@@ -233,24 +221,23 @@ const MyReactNativeForm = props => {
       }}>
 
         <View style={{
-          width: "40%",
+          width: "30%",
         }}>
-          <Button theme={theme} onPress={() => setVisibleTime(true)} uppercase={false}
-                  mode="outlined">
-            Start Time
-          </Button>
+          <Button onPress={showTimepickerStartTime} title="Start Time" />
         </View>
 
         <View style={{
-          width: "40%",
+          width: "30%",
           justifyContent: "center",
         }}>
-          <Button theme={theme} onPress={() => setOpen(true)} uppercase={false}
-                  mode="outlined">
-            Date
-          </Button>
+          <Button onPress={showTimepickerEndTime} title="End Time" />
         </View>
-
+        <View style={{
+          width: "30%",
+          justifyContent: "center",
+        }}>
+          <Button onPress={showDatePicker} title="Date" />
+        </View>
       </View>
 
       <View style={{
@@ -266,7 +253,6 @@ const MyReactNativeForm = props => {
           <TextInput theme={theme}
                      label={"Count"}
                      onChangeText={value => {
-                       console.log(value);
                        setCount(value);
                      }}
                      mode={"outlined"}
@@ -279,71 +265,62 @@ const MyReactNativeForm = props => {
           justifyContent: "center",
         }}>
           <Button
-            theme={theme}
             onPress={addSlot}
-          >Add Slot</Button>
+            title="Add Slot" />
         </View>
       </View>
-      <ScrollView keyboardShouldPersistTaps={"handled"}>
-        <View style={{
-          marginTop: 20,
-          backgroundColor: planted_colors.LIGHT_BLUE,
-          height: "100%",
-          alignItems: "center",
-        }}>
-          {slotDetails.map((i, j) => {
-            return <Card style={{
-              width: "90%",
-              marginTop: 10,
-              backgroundColor: planted_colors.BLUEISH_GREEN,
-            }}>
+      <View style={{
+        marginTop: 20,
+        backgroundColor: planted_colors.LIGHT_BLUE,
+        height: "100%",
+      }}>
 
-              <Card.Content>
-                <Title>Date: {i.eventDate}</Title>
-                {i.eventTiming.map((i, j) => {
-                  return <Paragraph> Start Time : {i.startTime}, Capacity: {i.allotmentLimit}</Paragraph>;
-                })}
-
-              </Card.Content>
+      </View>
 
 
-            </Card>;
-          })
+      {showStartTime && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={new Date()}
+          mode={mode}
+          is24Hour={false}
+          display="clock"
+          onChange={(event, date) => {
+            setShowStartTimeText(date.toLocaleTimeString(undefined, { timeZone: "Asia/Kolkata" }));
+            setShowStartTime(false);
+          }}
+        />
+      )}
 
-          }
+      {showEndTime && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={new Date()}
+          style={{ backgroundColor: planted_colors.BLUEISH_GREEN }}
+          mode={mode}
+          is24Hour={false}
+          display="clock"
+          onChange={(event, date) => {
+            setShowEndTimeText(date.toLocaleTimeString(undefined, { timeZone: "Asia/Kolkata" }));
+            setShowEndTime(false);
+          }}
+        />
+      )}
 
-
-        </View>
-      </ScrollView>
-
-      <DatePickerModal
-        // locale={'en'} optional, default: automatic
-        mode="single"
-        visible={open}
-        onDismiss={onDismissSingle}
-        date={new Date()}
-        onConfirm={onConfirmSingle}
-        onChange={(date) => {
-          setShowDateText(date.date.toLocaleString());
-        }} // same props as onConfirm but triggered without confirmed by user
-        saveLabel="Save" // optional
-        label="Select date" // optional
-        // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
-      />
-
-      <TimePickerModal
-        visible={visibleTime}
-        onDismiss={onDismissTime}
-        onConfirm={onConfirmTime}
-
-        hours={12} // default: current hours
-        minutes={14} // default: current minutes
-        label="Select time" // optional, default 'Select time'
-        cancelLabel="Cancel" // optional, default: 'Cancel'
-        confirmLabel="Ok" // optional, default: 'Ok'
-        // animationType="fade" // optional, default is 'none'
-        locale={"en"} // optional, default is automically detected by your system
-      />
+      {showDate && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={new Date()}
+          style={{ backgroundColor: planted_colors.BLUEISH_GREEN }}
+          mode={"date"}
+          is24Hour={false}
+          display="default"
+          onChange={(event, date) => {
+            setShowDateText(date.toLocaleDateString(undefined, { timeZone: "Asia/Kolkata" }));
+            setShowDate(false);
+          }}
+        />
+      )}
 
     </View>
 
