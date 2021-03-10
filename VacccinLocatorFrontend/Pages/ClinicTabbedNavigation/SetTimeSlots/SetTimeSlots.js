@@ -82,12 +82,19 @@ const MyReactNativeForm = props => {
   const [showDate, setShowDate] = useState(false);
   const [time, setTime] = useState();
 
+<<<<<<< HEAD
   const [showStartTimeText, setShowStartTimeText] = useState("");
   const [showEndTimeText, setShowEndTimeText] = useState("");
+=======
+  const [visibleEndTime, setVisibleEndTime] = React.useState(false);
+
+  const [showStartTimeText, setShowStartTimeText] = useState(null);
+  const [showEndTimeText, setShowEndTimeText] = useState(null);
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
   const [showDateText, setShowDateText] = useState("");
   const [count, setCount] = useState("");
 
-  const [countRepeat, setCountRepeat] = useState(0);
+
 
   const showModeStartTime = (currentMode) => {
     setShowStartTime(true);
@@ -98,11 +105,44 @@ const MyReactNativeForm = props => {
     showModeStartTime("time");
   };
 
+<<<<<<< HEAD
+=======
+  const onConfirmTime = React.useCallback(
+    ({ hours, minutes }) => {
+      setVisibleTime(false);
+      var d = new Date();
+      d.setHours(hours);
+      d.setMinutes(minutes);
+      setShowStartTimeText(d.toISOString());
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
 
   const showModeEndTime = (currentMode) => {
     setShowEndTime(true);
 
+<<<<<<< HEAD
   };
+=======
+  const onDismissEndTime = React.useCallback(() => {
+    setVisibleEndTime(false);
+  }, [setVisibleEndTime]);
+
+
+  const onConfirmEndTime = React.useCallback(
+    ({ hours, minutes }) => {
+      setVisibleEndTime(false);
+      var d = new Date();
+      d.setHours(hours);
+      d.setMinutes(minutes);
+      setShowEndTimeText(d.toISOString());
+
+      console.log({ hours, minutes });
+    },
+    [setVisibleTime],
+  );
+  const getSlots = async () => {
+
+    console.log("getSlots", getUserId);
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
 
   const showTimepickerEndTime = () => {
     showModeEndTime("time");
@@ -121,6 +161,27 @@ const MyReactNativeForm = props => {
   const addSlot = async () => {
     var timeSlots = {};
     var nestedTimeSlot = {};
+<<<<<<< HEAD
+=======
+    console.log(JSON.stringify({
+            "clinicObjectId": getUserId,
+            "eventDate": showDateText,
+            "startTime": showStartTimeText,
+            "endTime":showEndTimeText,
+            "count": count,
+          }));
+    let new_event_date = new Date(showDateText)
+
+    let new_end_date = new Date(showDateText)
+    let showStartTimeTextFor = new Date(showEndTimeText)
+    new_end_date.setHours(showStartTimeTextFor.getHours())
+    new_end_date.setMinutes(showStartTimeTextFor.getMinutes())
+
+    let new_start_date = new Date(showDateText)
+    let showEndTimeTextFor = new Date(showStartTimeText)
+    new_start_date.setHours(showEndTimeTextFor.getHours())
+    new_start_date.setMinutes(showEndTimeTextFor.getMinutes())
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
 
     nestedTimeSlot[showStartTimeText.toString()] =[0,count];
 
@@ -141,8 +202,16 @@ const MyReactNativeForm = props => {
         "Content-Type": "application/json",
       },
         body: JSON.stringify({
+<<<<<<< HEAD
           "clinicObjectId": "6044df4fb8b7d14f20a42b3a",
           "timeSlots": timeSlots,
+=======
+          "clinicObjectId": getUserId,
+          "eventDate": showDateText,
+          "startTime": new_start_date,
+          "endTime":new_end_date,
+          "count": count,
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
         }),
       },
     );
@@ -153,6 +222,61 @@ const MyReactNativeForm = props => {
   };
 
   console.log(userDetails);
+  const slotDetailManagement=()=>{
+    if(slotDetails) {
+     return <View style={{
+        marginTop: 20,
+        backgroundColor: planted_colors.LIGHT_BLUE,
+        height: "100%",
+        alignItems: "center",
+      }}>
+        {slotDetails && slotDetails.map((i, j) => {
+          return <Card style={{
+            width: "90%",
+            marginTop: 10,
+            backgroundColor: planted_colors.BLUEISH_GREEN,
+          }}>
+
+            <Card.Content>
+              <Title>Date: {new Date(i.eventDate).toLocaleDateString()}</Title>
+              {i.eventTiming.map((i, j) => {
+                return <View view={{
+                backgroundColor:planted_colors.STRONG_YELLOW,
+                  width:"100%",
+                  height:"100%"
+                }}>
+                  <Paragraph>Start Time : {new Date(i.startTime).toLocaleTimeString()}</Paragraph>
+                  <Paragraph>End Time : {new Date(i.endTime).toLocaleTimeString()}</Paragraph>
+                  <Paragraph>Capacity: {i.allotmentLimit}</Paragraph>
+                </View>;
+              })}
+
+            </Card.Content>
+
+
+          </Card>;
+        })
+
+        }
+
+
+      </View>
+    }
+    return <Card style={{
+      width: "90%",
+      marginTop: 10,
+      backgroundColor: planted_colors.BLUEISH_GREEN,
+    }}>
+
+      <Card.Content>
+        <Title>No Slots Created Yet</Title>
+
+
+      </Card.Content>
+
+
+    </Card>;
+  }
   if (loading) {
     return (
       <View style={{
@@ -191,6 +315,16 @@ const MyReactNativeForm = props => {
 
           }}>{showStartTimeText}</Text>
         </View>
+        <View style={{
+          width: "30%",
+          alignItems: "center",
+        }}>
+          <Text style={{
+            color: planted_colors.STRONG_RED,
+
+
+          }}>{showEndTimeText}</Text>
+        </View>
 
         <View style={{
           width: "30%",
@@ -228,6 +362,18 @@ const MyReactNativeForm = props => {
 
         <View style={{
           width: "30%",
+<<<<<<< HEAD
+=======
+        }}>
+          <Button theme={theme} onPress={() => setVisibleEndTime(true)} uppercase={false}
+                  mode="outlined">
+            End Time
+          </Button>
+        </View>
+
+        <View style={{
+          width: "30%",
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
           justifyContent: "center",
         }}>
           <Button onPress={showTimepickerEndTime} title="End Time" />
@@ -269,6 +415,7 @@ const MyReactNativeForm = props => {
             title="Add Slot" />
         </View>
       </View>
+<<<<<<< HEAD
       <View style={{
         marginTop: 20,
         backgroundColor: planted_colors.LIGHT_BLUE,
@@ -321,6 +468,54 @@ const MyReactNativeForm = props => {
           }}
         />
       )}
+=======
+      <ScrollView keyboardShouldPersistTaps={"handled"}>
+        {slotDetailManagement()}
+      </ScrollView>
+
+      <DatePickerModal
+        // locale={'en'} optional, default: automatic
+        mode="single"
+        visible={open}
+        onDismiss={onDismissSingle}
+        date={new Date()}
+        onConfirm={onConfirmSingle}
+        onChange={(date) => {
+          setShowDateText(date.date.toISOString());
+        }} // same props as onConfirm but triggered without confirmed by user
+        saveLabel="Save" // optional
+        label="Select date" // optional
+        // animationType="slide" // optional, default is 'slide' on ios/android and 'none' on web
+      />
+
+      <TimePickerModal
+        visible={visibleTime}
+        onDismiss={onDismissTime}
+        onConfirm={onConfirmTime}
+
+        hours={9} // default: current hours
+        minutes={0} // default: current minutes
+        label="Select time" // optional, default 'Select time'
+        cancelLabel="Cancel" // optional, default: 'Cancel'
+        confirmLabel="Ok" // optional, default: 'Ok'
+        // animationType="fade" // optional, default is 'none'
+        locale={"en"} // optional, default is automically detected by your system
+      />
+
+      <TimePickerModal
+        visible={visibleEndTime}
+        onDismiss={onDismissEndTime}
+        onConfirm={onConfirmEndTime}
+
+        hours={10} // default: current hours
+        minutes={0} // default: current minutes
+        label="Select time" // optional, default 'Select time'
+        cancelLabel="Cancel" // optional, default: 'Cancel'
+        confirmLabel="Ok" // optional, default: 'Ok'
+        // animationType="fade" // optional, default is 'none'
+        locale={"en"} // optional, default is automically detected by your system
+      />
+>>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
 
     </View>
 
