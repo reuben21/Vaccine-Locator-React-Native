@@ -115,7 +115,14 @@ const MyReactNativeForm = props => {
   const [showEndTimeText, setShowEndTimeText] = useState(null);
 >>>>>>> a9ed9bf9f0b463251f696a1d7d07977be3d78158
   const [showDateText, setShowDateText] = useState("");
+<<<<<<< HEAD
   const [count, setCount] = useState("");
+=======
+  const [count, setCount] = useState(0);
+
+  const [slotDetails, setSlotDetails] = useState(null);
+
+>>>>>>> e401e5699d0c0933b5c6a86d49de86cd008073f4
 
 
 
@@ -249,7 +256,7 @@ const MyReactNativeForm = props => {
     console.log(resData)
   };
 
-  console.log(userDetails);
+  console.log("The Slots Created",slotDetails);
   const slotDetailManagement=()=>{
     if(slotDetails) {
      return <View style={{
@@ -289,21 +296,23 @@ const MyReactNativeForm = props => {
 
 
       </View>
+    } else {
+      return <Card style={{
+        width: "90%",
+        marginTop: 10,
+        backgroundColor: planted_colors.BLUEISH_GREEN,
+      }}>
+
+        <Card.Content>
+          <Title>No Slots Created Yet</Title>
+
+
+        </Card.Content>
+
+
+      </Card>;
     }
-    return <Card style={{
-      width: "90%",
-      marginTop: 10,
-      backgroundColor: planted_colors.BLUEISH_GREEN,
-    }}>
 
-      <Card.Content>
-        <Title>No Slots Created Yet</Title>
-
-
-      </Card.Content>
-
-
-    </Card>;
   }
   if (loading) {
     return (
@@ -425,12 +434,12 @@ const MyReactNativeForm = props => {
           width: "40%",
         }}>
           <TextInput theme={theme}
-                     label={"Count"}
+                     label={"Capacity"}
                      onChangeText={value => {
                        setCount(value);
                      }}
                      mode={"outlined"}
-                     placeholder={"Count"} />
+                     placeholder={"Capacity"} />
 
         </View>
 
