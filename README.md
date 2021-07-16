@@ -24,7 +24,7 @@
   <li> Google Geolocation  </li>
   <li> Google Places </li>
 </ul>
-  <li> Booking Slot Mangement in MongoDB </li>
+ 
 </ul>
 
 <h3> A Demo of the App Made in React Native </h3>
